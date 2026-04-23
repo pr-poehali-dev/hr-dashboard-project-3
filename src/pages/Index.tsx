@@ -37,6 +37,15 @@ const departments = [
   { name: "Разработка", value: 78, color: "hsl(38, 92%, 48%)" },
 ];
 
+const hiringData = [
+  { month: "Октябрь", applied: 47, interviewed: 18, offered: 8, hired: 6 },
+  { month: "Ноябрь", applied: 52, interviewed: 21, offered: 9, hired: 8 },
+  { month: "Декабрь", applied: 31, interviewed: 12, offered: 5, hired: 4 },
+  { month: "Январь", applied: 28, interviewed: 10, offered: 4, hired: 3 },
+  { month: "Февраль", applied: 61, interviewed: 24, offered: 11, hired: 9 },
+  { month: "Март", applied: 74, interviewed: 29, offered: 14, hired: 12 },
+];
+
 const forecasts = [
   {
     label: "Прогноз текучести",
@@ -822,6 +831,179 @@ export default function Index() {
             </div>
           </div>
         </section>
+
+        {/* Hiring funnel table */}
+        {(() => {
+          const withConversion = hiringData.map((r) => ({
+            ...r,
+            conversion: +((r.hired / r.applied) * 100).toFixed(1),
+          }));
+          const convValues = withConversion.map((r) => r.conversion);
+          const best = Math.max(...convValues);
+          const worst = Math.min(...convValues);
+
+          const cols = [
+            { key: "applied", label: "Подано" },
+            { key: "interviewed", label: "Интервью" },
+            { key: "offered", label: "Оффер" },
+            { key: "hired", label: "Вышли" },
+          ] as const;
+
+          return (
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2
+                    className="text-sm"
+                    style={{ fontWeight: 600, color: "hsl(var(--foreground))" }}
+                  >
+                    Динамика найма
+                  </h2>
+                  <p
+                    className="text-xs mt-0.5"
+                    style={{ color: "hsl(var(--hr-muted))" }}
+                  >
+                    Воронка подбора за последние 6 месяцев
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-xs" style={{ color: "hsl(var(--hr-muted))" }}>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: "hsl(var(--hr-green-light))", border: "1px solid hsl(142,71%,70%)" }} />
+                    Лучший месяц
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: "hsl(var(--hr-red-light))", border: "1px solid hsl(0,84%,75%)" }} />
+                    Худший месяц
+                  </span>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl border overflow-hidden"
+                style={{
+                  background: "hsl(var(--hr-surface))",
+                  borderColor: "hsl(var(--hr-border))",
+                }}
+              >
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid hsl(var(--hr-border))", background: "#f4f6f9" }}>
+                      <th className="text-left px-5 py-3 text-xs uppercase tracking-wide" style={{ fontWeight: 600, color: "hsl(var(--hr-muted))", width: "14%" }}>
+                        Месяц
+                      </th>
+                      {cols.map((c) => (
+                        <th key={c.key} className="text-right px-4 py-3 text-xs uppercase tracking-wide" style={{ fontWeight: 600, color: "hsl(var(--hr-muted))" }}>
+                          {c.label}
+                        </th>
+                      ))}
+                      <th className="text-right px-5 py-3 text-xs uppercase tracking-wide" style={{ fontWeight: 600, color: "hsl(var(--hr-muted))" }}>
+                        Конверсия
+                      </th>
+                      <th className="px-5 py-3 text-xs uppercase tracking-wide" style={{ fontWeight: 600, color: "hsl(var(--hr-muted))", width: "22%" }}>
+                        Воронка
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withConversion.map((row, i) => {
+                      const isBest = row.conversion === best;
+                      const isWorst = row.conversion === worst;
+                      const rowBg = isBest
+                        ? "hsl(var(--hr-green-light))"
+                        : isWorst
+                        ? "hsl(var(--hr-red-light))"
+                        : i % 2 === 0 ? "transparent" : "#fafbfc";
+                      const convColor = isBest
+                        ? "hsl(var(--hr-green))"
+                        : isWorst
+                        ? "hsl(var(--hr-red))"
+                        : "hsl(var(--foreground))";
+
+                      return (
+                        <tr
+                          key={row.month}
+                          style={{
+                            background: rowBg,
+                            borderBottom: i < withConversion.length - 1 ? "1px solid hsl(var(--hr-border))" : "none",
+                          }}
+                        >
+                          <td className="px-5 py-3.5" style={{ fontWeight: 500, color: "hsl(var(--foreground))" }}>
+                            <div className="flex items-center gap-2">
+                              {isBest && (
+                                <Icon name="TrendingUp" size={12} style={{ color: "hsl(var(--hr-green))", flexShrink: 0 }} />
+                              )}
+                              {isWorst && (
+                                <Icon name="TrendingDown" size={12} style={{ color: "hsl(var(--hr-red))", flexShrink: 0 }} />
+                              )}
+                              {!isBest && !isWorst && <span className="w-3 inline-block" />}
+                              {row.month}
+                            </div>
+                          </td>
+                          {cols.map((c) => (
+                            <td key={c.key} className="px-4 py-3.5 text-right font-mono" style={{ fontWeight: 500, color: "hsl(var(--foreground))" }}>
+                              {row[c.key]}
+                            </td>
+                          ))}
+                          <td className="px-5 py-3.5 text-right">
+                            <span
+                              className="font-mono text-sm"
+                              style={{ fontWeight: 700, color: convColor }}
+                            >
+                              {row.conversion}%
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-1">
+                              {[
+                                { val: row.applied, color: "hsl(var(--hr-blue))", opacity: "0.25" },
+                                { val: row.interviewed, color: "hsl(var(--hr-blue))", opacity: "0.5" },
+                                { val: row.offered, color: "hsl(var(--hr-blue))", opacity: "0.75" },
+                                { val: row.hired, color: "hsl(var(--hr-blue))", opacity: "1" },
+                              ].map((seg, si) => (
+                                <div
+                                  key={si}
+                                  className="h-4 rounded-sm"
+                                  style={{
+                                    width: `${(seg.val / row.applied) * 100}%`,
+                                    background: seg.color,
+                                    opacity: seg.opacity,
+                                    minWidth: 4,
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot>
+                    <tr style={{ borderTop: "2px solid hsl(var(--hr-border))", background: "#f4f6f9" }}>
+                      <td className="px-5 py-3 text-xs uppercase tracking-wide" style={{ fontWeight: 600, color: "hsl(var(--hr-muted))" }}>
+                        Итого
+                      </td>
+                      {cols.map((c) => (
+                        <td key={c.key} className="px-4 py-3 text-right font-mono" style={{ fontWeight: 700, color: "hsl(var(--foreground))" }}>
+                          {withConversion.reduce((s, r) => s + r[c.key], 0)}
+                        </td>
+                      ))}
+                      <td className="px-5 py-3 text-right font-mono" style={{ fontWeight: 700, color: "hsl(var(--hr-blue))" }}>
+                        {(
+                          (withConversion.reduce((s, r) => s + r.hired, 0) /
+                            withConversion.reduce((s, r) => s + r.applied, 0)) *
+                          100
+                        ).toFixed(1)}%
+                      </td>
+                      <td className="px-5 py-3 text-xs" style={{ color: "hsl(var(--hr-muted))" }}>
+                        Средняя конверсия
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* Footer */}
         <footer
