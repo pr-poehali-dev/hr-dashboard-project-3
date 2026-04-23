@@ -4,8 +4,20 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 220 20% 97%;
+    --foreground: 220 25% 12%;
+
+    --hr-blue: 217 91% 42%;
+    --hr-blue-light: 217 91% 95%;
+    --hr-green: 142 71% 38%;
+    --hr-green-light: 142 71% 95%;
+    --hr-red: 0 84% 55%;
+    --hr-red-light: 0 84% 96%;
+    --hr-amber: 38 92% 48%;
+    --hr-amber-light: 38 92% 95%;
+    --hr-surface: 0 0% 100%;
+    --hr-border: 220 13% 88%;
+    --hr-muted: 220 15% 55%;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;

@@ -7,6 +7,7 @@ export default {
 		"./components/**/*.{ts,tsx}",
 		"./app/**/*.{ts,tsx}",
 		"./src/**/*.{ts,tsx}",
+			"./1776964397321166264.html"
 	],
 	prefix: "",
 	theme: {
@@ -18,7 +19,22 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['IBM Plex Sans', 'sans-serif'],
+				mono: ['IBM Plex Mono', 'monospace'],
+			},
 			colors: {
+				'hr-blue': 'hsl(var(--hr-blue))',
+				'hr-blue-light': 'hsl(var(--hr-blue-light))',
+				'hr-green': 'hsl(var(--hr-green))',
+				'hr-green-light': 'hsl(var(--hr-green-light))',
+				'hr-red': 'hsl(var(--hr-red))',
+				'hr-red-light': 'hsl(var(--hr-red-light))',
+				'hr-amber': 'hsl(var(--hr-amber))',
+				'hr-amber-light': 'hsl(var(--hr-amber-light))',
+				'hr-surface': 'hsl(var(--hr-surface))',
+				'hr-border': 'hsl(var(--hr-border))',
+				'hr-muted': 'hsl(var(--hr-muted))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
